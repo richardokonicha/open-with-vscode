@@ -1,0 +1,23 @@
+version: '3'
+services:
+  withcode:
+    container_name: withcode
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3001:3001'
+    # volumes:
+    #   - prisma:/app/prisma
+    #   - .:/app
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgres://default:HlJzr0v6eyGp@ep-calm-brook-757839.us-east-1.postgres.vercel-storage.com:5432/verceldb
+    networks:
+      - online-ide
+volumes:
+  prisma:
+networks:
+  online-ide:
+    external: true
