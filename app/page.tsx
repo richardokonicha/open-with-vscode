@@ -1,31 +1,49 @@
 import Card from "@/components/home/card";
 import Balancer from "react-wrap-balancer";
-// import { DEPLOY_URL } from "@/lib/constants";
 import { Github, Vscode } from "@/components/shared/icons";
 import WebVitals from "@/components/home/web-vitals";
 import ListProjects from "@/components/home/list-project"
 import ComponentGrid from "@/components/home/component-grid";
 import CreateProject from "@/components/home/create-project"
 import Image from "next/image";
-import { nFormatter } from "@/lib/utils";
 
-export default async function Home() {
-  const { stargazers_count: stars } = await fetch(
-    "https://api.github.com/repos/steven-tey/withCode",
-    {
-      ...(process.env.GITHUB_OAUTH_TOKEN && {
+type Data = {
+  id: number,
+  name: string,
+  full_name: string,
+  clone_url: string,
+  default_branch: string,
+  owner: {
+    avatar_url: string
+    username: string
+  }
+}
+async function getData() {
+  try {
+    const response = await fetch(
+      `${process.env.BASE_URL}/repos/search`,
+      {
         headers: {
-          Authorization: `Bearer ${process.env.GITHUB_OAUTH_TOKEN}`,
+          Authorization: `Bearer ${process.env.TOKEN}`,
           "Content-Type": "application/json",
         },
-      }),
-      // data will revalidate every 24 hours
-      next: { revalidate: 86400 },
-    },
-  )
-    .then((res) => res.json())
-    .catch((e) => console.log(e));
+      }
+    );
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      return data
+    } else {
+      throw new Error(`Request failed with status: ${response.status}`);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
 
+export default async function Home() {
+  const { data }: { data: [Data] } = await getData();
+  console.log(data, "data")
   return (
     <>
       <div className="z-10 w-full max-w-xl px-5 xl:px-0">
@@ -70,88 +88,20 @@ export default async function Home() {
             </p>
           </a>
         </div>
-
-
       </div>
 
-      <div className="my-10 grid w-full max-w-screen-xl animate-fade-up grid-cols-1 gap-5 px-5 md:grid-cols-3 xl:px-0">
-        {features.map(({ title, description, demo, large }) => (
-          <Card
-            key={title}
-            title={title}
-            description={description}
-            demo={
-              title === "sample" ? (
-                <ComponentGrid />
-              ) : (
-                demo
-              )
-            }
-            large={large}
-          />
-          // <div>llll</div>
-        ))}
 
-        <ListProjects />
+      <div className="my-10 flex w-full max-w-screen-xl animate-fade-up gap-5 px-5  xl:px-0">
 
+        <div
+          className={`flex-1 relative col-span-1 h-96 overflow-scroll rounded-xl border border-gray-200 bg-white shadow-md ${true ? "md:col-span-2" : ""
+            }`}
+        >
+          <div className="flex h-60 items-center justify-center">{<ComponentGrid />}</div>
+        </div>
+
+        <ListProjects data={data} />
       </div>
     </>
   );
 }
-
-const features = [
-  // {
-  //   title: "Performance first",
-  //   description:
-  //     "Built on [Next.js](https://nextjs.org/) primitives like `@next/font` and `next/image` for stellar performance.",
-  //   demo: <ListProjects />,
-  // },
-  {
-    title: "Open with Code",
-    description:
-      "Repositories on Gitea",
-    large: true,
-  },
-  // {
-  //   title: "One-click Deploy",
-  //   description:
-  //     "Jumpstart your next project by deploying withCode to [Vercel](https://vercel.com/) in one click.",
-  //   demo: (
-  //     <a href={DEPLOY_URL}>
-  //       <Image
-  //         src="https://vercel.com/button"
-  //         alt="Deploy with Vercel"
-  //         width={120}
-  //         height={30}
-  //         unoptimized
-  //       />
-  //     </a>
-  //   ),
-  // },
-  // {
-  //   title: "Built-in Auth + Database",
-  //   description:
-  //     "withCode comes with authentication and database via [Auth.js](https://authjs.dev/) + [Prisma](https://prisma.io/)",
-  //   demo: (
-  //     <div className="flex items-center justify-center space-x-20">
-  //       <Image alt="Auth.js logo" src="/authjs.webp" width={50} height={50} />
-  //       <Image alt="Prisma logo" src="/prisma.svg" width={50} height={50} />
-  //     </div>
-  //   ),
-  // },
-  // {
-  //   title: "Hooks, utilities, and more",
-  //   description:
-  //     "withCode offers a collection of hooks, utilities, and `@vercel/og`",
-  //   demo: (
-  //     <div className="grid grid-flow-col grid-rows-3 gap-10 p-10">
-  //       <span className="font-mono font-semibold">useIntersectionObserver</span>
-  //       <span className="font-mono font-semibold">useLocalStorage</span>
-  //       <span className="font-mono font-semibold">useScroll</span>
-  //       <span className="font-mono font-semibold">nFormatter</span>
-  //       <span className="font-mono font-semibold">capitalize</span>
-  //       <span className="font-mono font-semibold">truncate</span>
-  //     </div>
-  //   ),
-  // },
-];
