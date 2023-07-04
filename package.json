@@ -1,5 +1,5 @@
 {
-  "name": "precedent",
+  "name": "withCode",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -20,7 +20,9 @@
     "@types/react-dom": "18.0.10",
     "@vercel/analytics": "^0.1.6",
     "@vercel/og": "^0.0.26",
+    "class-variance-authority": "^0.6.1",
     "classnames": "^2.3.2",
+    "clsx": "^1.2.1",
     "eslint": "8.31.0",
     "eslint-config-next": "13.1.1",
     "focus-trap-react": "^10.0.2",
@@ -33,6 +35,8 @@
     "react-dom": "18.2.0",
     "react-markdown": "^8.0.4",
     "react-wrap-balancer": "^0.3.0",
+    "tailwind-merge": "^1.13.2",
+    "tailwindcss-animate": "^1.0.6",
     "typescript": "4.9.4",
     "use-debounce": "^9.0.3"
   },
